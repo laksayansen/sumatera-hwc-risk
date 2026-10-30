@@ -218,3 +218,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Project data that must never be committed
+data/raw/
+data/interim/
+.DS_Store
