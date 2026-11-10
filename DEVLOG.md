@@ -31,3 +31,4 @@
 - Done. Updated the codebook to v2 before labeling. Limited species to the four focal species, generalized the location and date rules for Mongabay, marked the passing-reference rule as superseded by the species-place-date rule, reconciled the publication-date fallback with that rule, and added labeling conventions for the gold set
 - Done. Labeled the first gold article (siamang species feature, 2015-08-09) as a non-event and added a rule for species-profile features
 - Done. Cross-checked 18 gold articles against codebook v2. Added rules for live capture, snares, photo captions, and suspected causes of death, plus glossary entries for harimau dahan, macan tutul, and species words inside place names
+- Note. Some cross-checked articles are in the holdout split; rules derived from them may make the holdout extraction score slightly optimistic

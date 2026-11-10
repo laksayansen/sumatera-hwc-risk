@@ -71,6 +71,9 @@ One herd raiding the same village for several days is ONE event.
 - beruang madu: sun bear
 - buaya muara: estuarine crocodile
 - kebun binatang: zoo (not a farm; zoo animals are excluded)
+- harimau dahan: clouded leopard (not a tiger; out of scope)
+- macan tutul: leopard (not a tiger; out of scope)
+- Species words inside place names (Desa Gajah Mati, Barak Gajah) are not animals
 
 ## Edge cases decided so far
 - 2026-11-08 Rescues or handovers of an animal found near homes are excluded unless a threat
@@ -99,3 +102,13 @@ One herd raiding the same village for several days is ONE event.
   incident across articles.
 - 2026-11-10 Species-profile features that mention focal species only in comparison or in
   pet-trade context are excluded (siamang feature, mongabay.co.id 2015-08-09).
+  - 2026-11-10 Live capture without injury (box trap, net, residents catching the animal) is
+  incursion_response. animal_harmed requires injury or death. (Solok Selatan sun bear)
+- 2026-11-10 Snares count as animal_harmed only when the article links them to protecting
+  crops or livestock (e.g. jerat babi) or places the snaring in a farm, garden, or
+  plantation. Snares described as set by hunters (jerat pemburu) in forest are poaching
+  and excluded. (Aceh snare article; Seluma sun bear included)
+- 2026-11-10 Photo captions are part of the article. When a caption and the body text
+  disagree on a date, use the body text. (Solok Selatan sun bear)
+- 2026-11-10 A suspected cause ("diduga diracun") does not confirm a human cause. Such deaths
+  stay death_unknown until a later article confirms the cause. (Langkat elephant death)
