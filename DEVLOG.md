@@ -19,7 +19,6 @@
 - Fix. Added retries with exponential backoff (10, 20, 40, 80 seconds), a per-page cache in data/raw/mongabay_pages so interrupted runs resume, and smaller pages (50 articles instead of 100)
 - Fix. Changed search terms to exactly the species words used by the candidate filter (harimau, macan, gajah, buaya, beruang). Because WordPress search matches any text containing the term, every article the filter could keep is guaranteed to be retrieved, while roughly halving the downloads
 - Data. 2,981 unique articles from 2015 to 2025, 1,851 kept as candidates. Articles per year range from 214 to 344, so early years are not thin and the full 2015 to 2025 panel stays
-- Next. Draw a 100-article gold sample (80 candidates, 20 rejects) and label it by hand before running any LLM extraction
 
 ## 2026-11-10 (3 h)
 - Problem. VS Code flagged unusual line terminators in candidates.jsonl. Some article text contained Unicode line and paragraph separators (U+2028, U+2029), which tools such as VS Code and str.splitlines() treat as line breaks and which could split a JSONL record in two
@@ -29,3 +28,6 @@
 - Data. Rebuilt all files from the page cache with no new downloads. 2,981 unique articles and 1,851 candidates, identical to 2026-11-08, which confirms that run already used the retry and cache version and that the cache reproduces results exactly
 - Done. Drew the gold sample with make_gold_sample.py. 100 articles (80 candidates and 20 keyword-filter rejects, seed 42), with 20 locked away as a holdout to be scored once at the very end (decisions.md #7)
 - Next. Hand-label all 100 articles in labels/gold_labels.csv before running any LLM extraction
+- Done. Updated the codebook to v2 before labeling. Limited species to the four focal species, generalized the location and date rules for Mongabay, marked the passing-reference rule as superseded by the species-place-date rule, reconciled the publication-date fallback with that rule, and added labeling conventions for the gold set
+- Done. Labeled the first gold article (siamang species feature, 2015-08-09) as a non-event and added a rule for species-profile features
+- Done. Cross-checked 18 gold articles against codebook v2. Added rules for live capture, snares, photo captions, and suspected causes of death, plus glossary entries for harimau dahan, macan tutul, and species words inside place names
