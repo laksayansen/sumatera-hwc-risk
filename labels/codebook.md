@@ -70,3 +70,7 @@ One herd raiding the same village for several days is ONE event.
   create an event. Only articles whose main subject is the incident do. (Seblat drone article)
 - 2026-11-08 Location comes from where the event happened, never from the agency's name
   ("BKSDA Bengkulu" also covers Lampung). (Mesuji tapir article)
+- 2026-11-08 An incident counts only if the article gives (a) the species, (b) a place at
+  regency level or finer, and (c) a date at month level or finer. Background mentions that
+  lack any of these do not create events. Deduplication merges repeat mentions of the same
+  incident across articles.

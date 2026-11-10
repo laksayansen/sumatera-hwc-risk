@@ -31,12 +31,11 @@ for AI is prohibited without written permission from ANTARA.
 terms permit this use, and request permission from Antara in parallel.
 
 ## 6. Mongabay Indonesia as the label source (2026-11-08)
-**Decision.** Collect conflict events from mongabay.co.id instead of Antara.
+**Decision.** Collect conflict events from mongabay.co.id through its public WordPress API.
 **Why.** Articles are published under CC BY-ND 4.0 (screenshot in docs/), and robots.txt
 sets no restrictions. The project publishes only extracted facts and article URLs,
 never article text or edited versions.
 **Benchmark.** The NTU human-tiger interaction dataset for Riau (2010 to 2020) will be
 used to estimate recall, not for training.
-**Pending.** Permission request to Antara; PPID request to BKSDA Bengkulu for incident records.
 **Risk.** Mongabay publishes fewer incident reports than Antara, so the Nov 15 checkpoint
 may require switching to regency-quarters.
