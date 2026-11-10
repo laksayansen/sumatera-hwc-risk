@@ -39,3 +39,10 @@ never article text or edited versions.
 used to estimate recall, not for training.
 **Risk.** Mongabay publishes fewer incident reports than Antara, so the Nov 15 checkpoint
 may require switching to regency-quarters.
+
+## 7. Gold set of 100 articles (2026-11-10)
+**Decision.** Hand-label 100 articles (80 candidates, 20 rejects) instead of the planned 150.
+**Why.** Mongabay articles are long features that take about 3 minutes each to label,
+so 150 would take over 7 hours. 100 still supports precision and recall estimates,
+with 20 articles held out for one final score.
+**Cost.** Wider uncertainty on the extraction scores, which will be reported as such.
