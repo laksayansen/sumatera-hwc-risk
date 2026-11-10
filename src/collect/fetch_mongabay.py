@@ -15,19 +15,17 @@ import requests
 from bs4 import BeautifulSoup
 
 API = "https://mongabay.co.id/wp-json/wp/v2/posts"
-# WordPress search matches any text containing the term, so searching exactly the species
-# words used by the candidate filter guarantees every article the filter could keep is fetched.
 TERMS = ["harimau", "macan", "gajah", "buaya", "beruang"]
 AFTER, BEFORE = "2015-01-01T00:00:00", "2026-01-01T00:00:00"
 HEADERS = {"User-Agent": "sumatera-hwc-risk student research (laksa.fyansen@gmail.com)"}
-PER_PAGE = 50            # smaller responses are less likely to be cut off mid-transfer
+PER_PAGE = 50            
 DELAY_SECONDS = 3
 MAX_ATTEMPTS = 4
 
-CACHE_DIR = Path("data/raw/mongabay_pages")        # one JSON file per API page, git-ignored
+CACHE_DIR = Path("data/raw/mongabay_pages")       
 RAW = Path("data/raw/articles.jsonl")
 CANDIDATES = Path("data/interim/candidates.jsonl")
-REJECTED = Path("data/interim/rejected.jsonl")     # kept so you can audit the filter later
+REJECTED = Path("data/interim/rejected.jsonl")     
 
 SPECIES = re.compile(r"\b(harimau|macan|gajah|buaya|beruang)\b", re.I)
 CONFLICT = re.compile(
@@ -44,9 +42,9 @@ def is_candidate(title: str, text: str) -> bool:
 def clean_html(rendered: str) -> str:
     soup = BeautifulSoup(rendered, "html.parser")
     for tag in soup(["script", "style", "figure", "figcaption"]):
-        tag.decompose()                                  # photo captions add noise, not facts
+        tag.decompose()                              
     text = soup.get_text("\n")
-    text = text.replace("\u2028", "\n").replace("\u2029", "\n")   # rare Unicode line breaks
+    text = text.replace("\u2028", "\n").replace("\u2029", "\n")   
     return re.sub(r"\n\s*\n+", "\n\n", text).strip()
 
 
@@ -69,7 +67,7 @@ def get_page(term: str, page: int, session: requests.Session) -> dict:
             time.sleep(DELAY_SECONDS)
             return data
         except (requests.RequestException, ValueError) as exc:
-            wait = 10 * 2 ** (attempt - 1)               # 10, 20, 40, 80 seconds
+            wait = 10 * 2 ** (attempt - 1)              
             print(f"  attempt {attempt} failed ({type(exc).__name__}), waiting {wait}s")
             time.sleep(wait)
     raise RuntimeError(f"Gave up on '{term}' page {page}. Rerun later; finished pages are cached.")
@@ -93,7 +91,7 @@ def main():
     for term in TERMS:
         print(f"Searching '{term}'")
         for post in fetch_term(term, session):
-            if post["id"] in articles:                   # same article found by another term
+            if post["id"] in articles:                   
                 articles[post["id"]]["terms"].append(term)
                 continue
             articles[post["id"]] = {
