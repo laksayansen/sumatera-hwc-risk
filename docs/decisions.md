@@ -46,3 +46,12 @@ may require switching to regency-quarters.
 so 150 would take over 7 hours. 100 still supports precision and recall estimates,
 with 20 articles held out for one final score.
 **Cost.** Wider uncertainty on the extraction scores, which will be reported as such.
+
+## 8. Fresh holdout set (2026-11-10)
+**Problem.** make_gold_sample.py placed the 20 holdout rows at the top of the sheet, so they
+were labeled first and reviewed with a second reader while codebook rules were being written.
+Rules learned from them would make the holdout extraction score optimistic.
+**Decision.** Moved those 20 rows to dev and drew 20 fresh holdout articles (16 candidates,
+4 rejects, seed 2026) with refresh_holdout.py. The fresh rows are labeled by me alone and
+never used to write or change codebook rules or the extraction prompt.
+**Cost.** About one more hour of labeling.

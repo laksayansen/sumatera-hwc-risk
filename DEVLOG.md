@@ -28,7 +28,12 @@
 - Data. Rebuilt all files from the page cache with no new downloads. 2,981 unique articles and 1,851 candidates, identical to 2026-11-08, which confirms that run already used the retry and cache version and that the cache reproduces results exactly
 - Done. Drew the gold sample with make_gold_sample.py. 100 articles (80 candidates and 20 keyword-filter rejects, seed 42), with 20 locked away as a holdout to be scored once at the very end (decisions.md #7)
 - Next. Hand-label all 100 articles in labels/gold_labels.csv before running any LLM extraction
-- Done. Updated the codebook to v2 before labeling. Limited species to the four focal species, generalized the location and date rules for Mongabay, marked the passing-reference rule as superseded by the species-place-date rule, reconciled the publication-date fallback with that rule, and added labeling conventions for the gold set
+- Done. Updated the codebook to v2 before labeling. Limited species to the four focal species, generalized the location and date rules for Mongabay, marked the passing-reference rule as superseded by the species-place-date rule, reconciled the publication-date fallback with that rule, and added labeling conventions for the gold set`
 - Done. Labeled the first gold article (siamang species feature, 2015-08-09) as a non-event and added a rule for species-profile features
 - Done. Cross-checked 18 gold articles against codebook v2. Added rules for live capture, snares, photo captions, and suspected causes of death, plus glossary entries for harimau dahan, macan tutul, and species words inside place names
 - Note. Some cross-checked articles are in the holdout split; rules derived from them may make the holdout extraction score slightly optimistic
+- Done. Finished hand-labeling all 100 gold articles
+- Done. Cross-checked the remaining 81 articles,15 read in full and 66 judged from title and location. Added codebook rules for physical evidence of cause of death, trade motive, multi-month incidents, vague timing, protected areas spanning regencies, uncertain attackers, response actions, and related-article links, plus the glossary entry datuk
+- Problem. The original holdout rows sat at the top of the sheet and were reviewed while rules were written, so the holdout was no longer unseen
+- Fix. Moved them to dev and drew 20 fresh holdout articles with refresh_holdout.py (decisions.md #8)
+- Next. Label the 20 fresh holdout articles, then compute agreement with the second reader on the dev set

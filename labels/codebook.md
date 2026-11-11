@@ -74,6 +74,7 @@ One herd raiding the same village for several days is ONE event.
 - harimau dahan: clouded leopard (not a tiger; out of scope)
 - macan tutul: leopard (not a tiger; out of scope)
 - Species words inside place names (Desa Gajah Mati, Barak Gajah) are not animals
+- datuk: respectful local name for a tiger in Riau and nearby regions
 
 ## Edge cases decided so far
 - 2026-11-08 Rescues or handovers of an animal found near homes are excluded unless a threat
@@ -91,9 +92,9 @@ One herd raiding the same village for several days is ONE event.
   is NOT part of the main target. If a later article confirms a human cause in a conflict
   setting, relabel it as animal_harmed, dated to the death. (Mukomuko tiger and elephant
   deaths)
-- 2026-11-08 [SUPERSEDED 2026-11-10 by the species-place-date rule below] Passing references
-  to an earlier incident (one sentence, no new detail) do not create an event. Only articles
-  whose main subject is the incident do. (Seblat drone article)
+- 2026-11-10 [SUPERSEDED 2026-11-10 by the physical-evidence rule below] A suspected cause
+  ("diduga diracun") does not confirm a human cause. Such deaths stay death_unknown until a
+  later article confirms the cause. (Langkat elephant death)
 - 2026-11-08 Location comes from where the event happened, never from the agency's name
   ("BKSDA Bengkulu" also covers Lampung). (Mesuji tapir article)
 - 2026-11-08 An incident counts only if the article gives (a) the species, (b) a place at
@@ -112,3 +113,27 @@ One herd raiding the same village for several days is ONE event.
   disagree on a date, use the body text. (Solok Selatan sun bear)
 - 2026-11-10 A suspected cause ("diduga diracun") does not confirm a human cause. Such deaths
   stay death_unknown until a later article confirms the cause. (Langkat elephant death)
+- 2026-11-10 PHYSICAL EVIDENCE. A death counts as animal_harmed when the article reports
+  physical evidence of a human-made cause at the scene (animal entangled in wire or a snare,
+  poisoned bait found with the carcass, gunshot wounds), even if officials say "diduga".
+  Deaths with only symptoms or speculation stay death_unknown. (Pidie Jaya elephant and
+  Aceh Selatan tiger included; Langkat 2017 elephant stays death_unknown)
+- 2026-11-10 TRADE MOTIVE. If the article states the animal was snared or killed to be sold,
+  it is poaching and excluded, even when the snare was in a plantation. (Langkat 2017 tiger
+  excluded; Langkat 2023 sun bears, motive unknown, included)
+- 2026-11-10 MULTI-MONTH INCIDENTS. An ongoing incident in the same place that spans more than
+  one calendar month is recorded as one event per month affected. (OKI elephant herd,
+  June and July 2016)
+- 2026-11-10 VAGUE TIMING. Relative phrases that do not pin down a month ("beberapa bulan
+  lalu", "tahun lalu") fail the date test. (Batang Gadis sun bear attack)
+- 2026-11-10 PROTECTED AREAS. A named reserve or park that spans several regencies does not
+  satisfy the place test unless the article also names the regency. (Kerumutan encounters)
+- 2026-11-10 UNCERTAIN ATTACKER. A human injury or death blamed on a focal species only by
+  residents' guesses, with no witness or evidence, does not count. (Batang Gadis January
+  2023 death)
+- 2026-11-10 RESPONSE ACTIONS. Darting, trapping, or patrols within 14 days of an incident in
+  the same place belong to that incident. A capture or evacuation on a later date is its own
+  incursion_response event. (Bonita darted 2018-03-16 belongs to the 2018-03-10 attack;
+  Bonita captured April 2018 is a new event)
+- 2026-11-10 RELATED LINKS. "Baca" and "Baca juga" link titles are not part of the article.
+  (Pasaman Barat article)
