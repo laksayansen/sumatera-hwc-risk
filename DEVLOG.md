@@ -37,3 +37,5 @@
 - Problem. The original holdout rows sat at the top of the sheet and were reviewed while rules were written, so the holdout was no longer unseen
 - Fix. Moved them to dev and drew 20 fresh holdout articles with refresh_holdout.py (decisions.md #8)
 - Next. Label the 20 fresh holdout articles, then compute agreement with the second reader on the dev set
+- Note. Dev labels (100 articles) were finalized after reading the second reader's review, so the 100% is_event agreement is post-adjudication, not independent inter-rater agreement
+- Done. Labeled the 20 fresh holdout articles alone, without the second reader

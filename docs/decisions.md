@@ -55,3 +55,10 @@ Rules learned from them would make the holdout extraction score optimistic.
 4 rejects, seed 2026) with refresh_holdout.py. The fresh rows are labeled by me alone and
 never used to write or change codebook rules or the extraction prompt.
 **Cost.** About one more hour of labeling.
+
+## 9. How label agreement is reported (2026-11-10)
+**Finding.** Dev labels were finalized after reading a second reader's review, so their
+agreement with that reader is post-adjudication.
+**Decision.** Report the dev set as adjudicated labels, not as an inter-rater reliability
+score. The 20 holdout articles were labeled by me alone and are used only for the final
+extraction score.`
