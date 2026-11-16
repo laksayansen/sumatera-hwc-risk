@@ -39,3 +39,7 @@
 - Next. Label the 20 fresh holdout articles, then compute agreement with the second reader on the dev set
 - Note. Dev labels (100 articles) were finalized after reading the second reader's review, so the 100% is_event agreement is post-adjudication, not independent inter-rater agreement
 - Done. Labeled the 20 fresh holdout articles alone, without the second reader
+
+## 2026-11-10 (3 hours)
+- Done. Rewrote the extraction prompt to follow codebook v3 (four species, Sumatra only, species-place-date test, physical-evidence, trade-motive, snare, multi-month, and response-action rules), raised the text limit to 15,000 characters, and restricted gold runs to the dev split so the holdout stays unseen (prompt v1)
+- Done. Updated evaluate_extraction.py to apply the same scope as the labels, report field accuracy for event type and event count, track token cost, and write a detailed error file
