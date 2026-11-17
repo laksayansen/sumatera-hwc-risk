@@ -73,3 +73,22 @@ prompt on the corrected labels so label fixes and prompt changes are measured se
 Holdout labels are never changed.
 **Limitation.** Only articles where the model disagreed were re-examined, so an error shared
 by me and the model would not be found.
+
+## 11. Pasaman Barat label restored (2026-11-17)
+**Finding.** The 2026-11-16 correction (decision #10) relied on an incomplete reading of the
+Pasaman Barat article. The article says the tiger was still roaming around settlements after
+leaving the dam channel, a team checked residents' track reports near Pinaga Aur Kuning, and
+BKSDA told residents to limit field work. That meets incursion_response.
+**Decision.** Restored the original label with fix_dev_labels_2026_11_17.py and revised the
+infrastructure rule (codebook v4). From now on, a label is changed only after reading the full
+passage in the article itself, not a summary of it.
+
+## 12. Prompt v3 is the final extraction prompt (2026-11-17)
+**Decision.** Stop prompt changes at v3, as planned (at most three versions). With 14 event
+articles in dev, a one-article difference between v1 and v2 is within run-to-run variation.
+**Rule, written before seeing any v3 result.** Run v3 on dev twice. If the main v3 run has no
+failed extractions and a dev F1 of at least 0.85, score the holdout once with v3 and use v3 for
+the full run. Otherwise fix only bugs (failed calls, parsing), never rules, and leave the
+holdout untouched until that is done.
+**Settings.** Claude Haiku 5.5, max_tokens 16,000, no sampling parameters (the model does not
+take them), up to 15,000 characters of body text plus photo captions.

@@ -1,4 +1,4 @@
-# Conflict event codebook (v3, 2026-11-17)
+# Conflict event codebook (v4, 2026-11-17)
 
 Changes from v1 (2026-11-08): species list limited to the four focal species; location
 and date rules generalized for Mongabay; passing-reference rule superseded by the
@@ -6,6 +6,8 @@ species-place-date rule; labeling conventions for the gold set added.
 
 Changes from v2 (2026-11-10): rules from the full 100-article cross-check (2026-11-10)
 and from the prompt v1 error analysis (2026-11-16).
+
+Changes from v3 (2026-11-17): infrastructure rule revised after re-reading the Pasaman Barat article.
 
 An EVENT is one negative encounter between people and a wild animal at one place
 within a short period, reported as having actually happened.
@@ -140,12 +142,19 @@ One herd raiding the same village for several days is ONE event.
   Bonita captured April 2018 is a new event)
 - 2026-11-10 RELATED LINKS. "Baca" and "Baca juga" link titles are not part of the article.
   (Pasaman Barat article)
-- 2026-11-16 INFRASTRUCTURE. Animals found in industrial or infrastructure sites (dams, power
-  plants, canals, mines, roads) count only when the article describes a threat to people,
-  livestock, or crops. A team visit or a general warning to residents is not enough.
-  (Pasaman Barat PLTMH dam tiger, 2024-03-23, excluded)
+- 2026-11-16 [SUPERSEDED 2026-11-17 by the revised infrastructure rule below] INFRASTRUCTURE.
+  Animals found in industrial or infrastructure sites (dams, power plants, canals, mines,
+  roads) count only when the article describes a threat to people, livestock, or crops. A
+  team visit or a general warning to residents is not enough. (Pasaman Barat PLTMH dam
+  tiger, 2024-03-23, excluded)
 - 2026-11-16 OWN DATE. Each event needs its own date. An undated attack mentioned before a
   dated capture does not take the capture's date; the attack fails the date test and the
   capture is its own incursion_response event. (Bonita, 2018-08-09 article)
 - 2026-11-16 ONE HERD, NEIGHBOURING FARMS. Damage by the same herd to neighbouring huts or
   farms on consecutive days is one event, dated to the first day. (Tebo, 6 and 7 Nov 2022)
+- 2026-11-17 INFRASTRUCTURE, REVISED. An animal in an industrial or infrastructure site
+  (dam, power plant, canal, mine, road) counts as incursion_response only when the article
+  says it then moved into or near a settlement or farms and authorities or residents
+  responded. An animal that stays in the site and leaves toward forest does not count, even
+  if a team was sent. (Pasaman Barat PLTMH dam tiger, 2024-03-23, included: it roamed
+  around settlements after leaving the channel and BKSDA told residents to limit field work)

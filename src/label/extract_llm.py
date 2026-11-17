@@ -6,7 +6,10 @@ versions stay comparable. Failed calls are retried on the next run.
 Examples:
   python src/label/extract_llm.py data/interim/gold_articles.jsonl --split dev --limit 3
   python src/label/extract_llm.py data/interim/gold_articles.jsonl --split dev
+  python src/label/extract_llm.py data/interim/gold_articles.jsonl --split dev --tag r2
   python src/label/extract_llm.py data/interim/candidates.jsonl
+
+Do not pass temperature, top_p, or top_k: Claude Haiku 5.5 does not take sampling parameters.
 """
 import argparse
 import csv
@@ -27,7 +30,9 @@ CACHE = Path("data/interim/llm_cache.jsonl")
 GOLD = Path("labels/gold_labels.csv")
 MAX_CHARS = 15000          # Mongabay features are long; incidents can appear late
 MAX_CAPTION_CHARS = 3000   # photo captions, sent after the body text
-MAX_TOKENS = 3000          # room for articles with many events
+MAX_TOKENS = 16000         # Haiku 5.5 thinks before answering and thinking counts toward this
+                           # limit; 2000 and 3000 cut off the Tesso Nilo reply. You pay only
+                           # for tokens actually used.
 MAX_ATTEMPTS = 4
 
 SYSTEM = """You extract human-wildlife conflict events from Indonesian news articles for a
@@ -76,7 +81,9 @@ EXCLUDE
 - Attacks blamed on a focal species only by residents' guesses, with no witness or evidence
 - Titles of related-article links ("Baca:", "Baca juga:") are not part of the article
 - Animals found in industrial or infrastructure sites (dams, power plants, canals, mines,
-  roads) when no threat to people, livestock, or crops is described, even if a team was sent
+  roads) that stay in the site and leave without approaching people, even if a team was
+  sent. If the article says the animal then moved into or near a settlement or farms and
+  authorities responded, it is an incursion_response event.
 
 SPECIAL RULES
 - Snares count as animal_harmed only when linked to protecting crops or livestock (for
@@ -118,6 +125,11 @@ LOCATION FIELDS
 Copy names as the article gives them. kabupaten is the regency name without "Kabupaten";
 write cities as "Kota X". Use null when a level is not named. province is always required
 for an event.
+
+BEFORE ANSWERING, CHECK
+- No animal in death_unknown also appears in events.
+- Nothing your notes say was excluded appears in events.
+- Every event passes the three-part test on its own.
 
 Return ONLY one JSON object, with no other text:
 {"aggregate_only": bool,
@@ -188,7 +200,9 @@ def main():
     ap.add_argument("input")
     ap.add_argument("--split", choices=["dev", "holdout"], help="only gold articles in this split")
     ap.add_argument("--limit", type=int)
+    ap.add_argument("--tag", help="store as a separate run, e.g. --tag r2 saves as v3-r2")
     args = ap.parse_args()
+    version = f"{PROMPT_VERSION}-{args.tag}" if args.tag else PROMPT_VERSION
 
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     done = set()
@@ -196,7 +210,7 @@ def main():
         with CACHE.open() as f:
             for line in f:
                 rec = json.loads(line)
-                if rec["prompt_version"] == PROMPT_VERSION and rec["parsed"] is not None:
+                if rec["prompt_version"] == version and rec["parsed"] is not None:
                     done.add(rec["url"])
 
     with open(args.input) as f:
@@ -207,13 +221,13 @@ def main():
     pending = [a for a in articles if a["url"] not in done]
     todo = pending[:args.limit]
     print(f"{len(articles)} articles selected, {len(articles) - len(pending)} already cached, "
-          f"{len(todo)} to extract now with prompt {PROMPT_VERSION}")
+          f"{len(todo)} to extract now with prompt {version}")
 
     CACHE.parent.mkdir(parents=True, exist_ok=True)
     with CACHE.open("a") as out:
         for i, art in enumerate(todo, 1):
             result = call_llm(client, art)
-            out.write(json.dumps({"url": art["url"], "prompt_version": PROMPT_VERSION,
+            out.write(json.dumps({"url": art["url"], "prompt_version": version,
                                   "model": MODEL, **result}, ensure_ascii=False) + "\n")
             out.flush()
             if result["error"]:
