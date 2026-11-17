@@ -39,13 +39,26 @@ def is_candidate(title: str, text: str) -> bool:
     return bool(SPECIES.search(blob)) and len(CONFLICT.findall(blob)) >= 2
 
 
+def _normalize(text: str) -> str:
+    text = text.replace("\u2028", "\n").replace("\u2029", "\n")   # rare Unicode line breaks
+    return re.sub(r"\n\s*\n+", "\n\n", text).strip()
+
+
 def clean_html(rendered: str) -> str:
+    """Article body text. Captions are removed here and kept separately (see extract_captions),
+    so the keyword filter still sees only the body and the candidate split does not change."""
     soup = BeautifulSoup(rendered, "html.parser")
     for tag in soup(["script", "style", "figure", "figcaption"]):
-        tag.decompose()                              
-    text = soup.get_text("\n")
-    text = text.replace("\u2028", "\n").replace("\u2029", "\n")   
-    return re.sub(r"\n\s*\n+", "\n\n", text).strip()
+        tag.decompose()
+    return _normalize(soup.get_text("\n"))
+
+
+def extract_captions(rendered: str) -> str:
+    """Photo captions (figcaption), one per line. The codebook treats captions as part of the
+    article, so the extractor needs them even though the keyword filter does not use them."""
+    soup = BeautifulSoup(rendered, "html.parser")
+    captions = [_normalize(c.get_text(" ")) for c in soup.find_all("figcaption")]
+    return "\n".join(c for c in captions if c)
 
 
 def get_page(term: str, page: int, session: requests.Session) -> dict:
@@ -99,6 +112,7 @@ def main():
                 "title": clean_html(post["title"]["rendered"]),
                 "pub_date": post["date"][:10],
                 "text": clean_html(post["content"]["rendered"]),
+                "captions": extract_captions(post["content"]["rendered"]),
                 "terms": [term]}
 
     kept = 0
@@ -113,7 +127,9 @@ def main():
                 rej.write(line)
 
     years = Counter(a["pub_date"][:4] for a in articles.values())
-    print(f"\n{len(articles)} unique articles, {kept} kept as candidates")
+    with_captions = sum(1 for a in articles.values() if a["captions"])
+    print(f"\n{len(articles)} unique articles, {kept} kept as candidates, "
+          f"{with_captions} with photo captions")
     print("Articles per year:", dict(sorted(years.items())))
 
 

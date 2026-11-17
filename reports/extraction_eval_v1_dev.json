@@ -2,23 +2,25 @@
   "prompt_version": "v1",
   "split": "dev",
   "n_articles": 100,
-  "tp": 11,
-  "fp": 1,
+  "n_gold_events_articles": 14,
+  "n_failed": 1,
+  "tp": 12,
+  "fp": 0,
   "fn": 2,
   "tn": 86,
-  "precision": 0.917,
-  "recall": 0.846,
-  "f1": 0.88,
+  "precision": 1.0,
+  "recall": 0.857,
+  "f1": 0.923,
   "field_accuracy_on_tp": {
     "event_type": 1.0,
     "species": 1.0,
-    "kabupaten": 0.909,
+    "kabupaten": 1.0,
     "province": 1.0,
-    "month": 0.909,
-    "n_events": 0.727
+    "month": 1.0,
+    "n_events": 0.75
   },
   "keyword_filter_recall_est": 1.0,
-  "tokens_in": 581048,
-  "tokens_out": 34968,
-  "cost_usd": 0.0756
+  "tokens_in": 586772,
+  "tokens_out": 36968,
+  "cost_usd": 0.0772
 }

@@ -28,7 +28,7 @@
 - Data. Rebuilt all files from the page cache with no new downloads. 2,981 unique articles and 1,851 candidates, identical to 2026-11-08, which confirms that run already used the retry and cache version and that the cache reproduces results exactly
 - Done. Drew the gold sample with make_gold_sample.py. 100 articles (80 candidates and 20 keyword-filter rejects, seed 42), with 20 locked away as a holdout to be scored once at the very end (decisions.md #7)
 - Next. Hand-label all 100 articles in labels/gold_labels.csv before running any LLM extraction
-- Done. Updated the codebook to v2 before labeling. Limited species to the four focal species, generalized the location and date rules for Mongabay, marked the passing-reference rule as superseded by the species-place-date rule, reconciled the publication-date fallback with that rule, and added labeling conventions for the gold set`
+- Done. Updated the codebook to v2 before labeling. Limited species to the four focal species, generalized the location and date rules for Mongabay, marked the passing-reference rule as superseded by the species-place-date rule, reconciled the publication-date fallback with that rule, and added labeling conventions for the gold set.
 - Done. Labeled the first gold article (siamang species feature, 2015-08-09) as a non-event and added a rule for species-profile features
 - Done. Cross-checked 18 gold articles against codebook v2. Added rules for live capture, snares, photo captions, and suspected causes of death, plus glossary entries for harimau dahan, macan tutul, and species words inside place names
 - Note. Some cross-checked articles are in the holdout split; rules derived from them may make the holdout extraction score slightly optimistic
@@ -38,8 +38,21 @@
 - Fix. Moved them to dev and drew 20 fresh holdout articles with refresh_holdout.py (decisions.md #8)
 - Next. Label the 20 fresh holdout articles, then compute agreement with the second reader on the dev set
 - Note. Dev labels (100 articles) were finalized after reading the second reader's review, so the 100% is_event agreement is post-adjudication, not independent inter-rater agreement
-- Done. Labeled the 20 fresh holdout articles alone, without the second reader
+- Done. Labeled the 20 `fresh holdout articles alone, without the second reader
 
 ## 2026-11-10 (3 hours)
 - Done. Rewrote the extraction prompt to follow codebook v3 (four species, Sumatra only, species-place-date test, physical-evidence, trade-motive, snare, multi-month, and response-action rules), raised the text limit to 15,000 characters, and restricted gold runs to the dev split so the holdout stays unseen (prompt v1)
 - Done. Updated evaluate_extraction.py to apply the same scope as the labels, report field accuracy for event type and event count, track token cost, and write a detailed error file
+
+## 2026-11-17 (4 h)
+- Data. Prompt v1 on the 100 dev articles scored precision 0.917, recall 0.846, F1 0.88 (11 TP, 1 FP, 2 FN, 86 TN) at a cost of US$0.08. Field accuracy on true positives was 1.0 for event type, species, and province, 0.909 for regency and month, and 0.727 for event count
+- Done. Read all 5 error rows. Only one was a prompt problem
+- Problem. Pipeline bug. The collector deleted photo captions to keep the keyword filter clean, so the extractor never saw the Seluma sun bear event, which appears only in a caption, even though the codebook counts captions as part of the article
+- Fix. The collector now stores captions in a separate captions field, so the keyword filter and candidate split are unchanged, and the extractor sends them after the body under "Keterangan foto". Rebuilt articles.jsonl from the page cache with no new downloads, then rebuilt gold_articles.jsonl with rebuild_gold_text.py
+- Problem. The Tesso Nilo reply could not be parsed as JSON, so it counted as a miss. v1 did not record why
+- Fix. extract_llm.py now records stop_reason and retries an unparseable reply once, and the evaluator reports failed extractions separately (n_failed) instead of hiding them among false negatives
+- Problem. Prompt error. For Bonita, the model gave the undated attacks the date of the April 2018 capture and labeled them human_attack
+- Fix. Prompt v2 states that each event needs its own date and that an undated attack never takes the date of a later capture
+- Problem. Label errors. The Tebo article (2023-05-24) was labeled 0 from its title, but it describes an elephant herd destroying huts in Muaro Sekalo, Tebo, on 6 and 7 Nov 2022, so the model was right. The Pasaman Barat dam tiger (2024-03-23), labeled incursion_response during adjudication with the second reader, describes no threat and the tiger left on its own, so it does not meet the rule
+- Fix. Corrected both dev labels with fix_dev_labels_2026_11_16.py (decisions.md #10) and added codebook rules for infrastructure sites, events needing their own date, and multi-day damage by one herd (codebook v3)
+- Note. The model split the Tebo herd into two events on consecutive nights. This is harmless downstream because dedup.py merges same-species events in the same regency within 14 days, so the prompt was not changed for it

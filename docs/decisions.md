@@ -62,3 +62,14 @@ agreement with that reader is post-adjudication.
 **Decision.** Report the dev set as adjudicated labels, not as an inter-rater reliability
 score. The 20 holdout articles were labeled by me alone and are used only for the final
 extraction score.`
+
+## 10. Correcting dev labels found wrong during error analysis (2026-11-16)
+**Finding.** The prompt v1 error analysis showed two dev labels broke the codebook. The Tebo
+article (2023-05-24) describes elephants destroying huts on 6 and 7 Nov 2022 but was labeled 0
+from its title. The Pasaman Barat dam tiger (2024-03-23) does not meet incursion_response.
+**Decision.** Correct a dev label when error analysis shows it breaks the codebook, apply the
+change with a committed script (fix_dev_labels_2026_11_16.py), and re-score the previous
+prompt on the corrected labels so label fixes and prompt changes are measured separately.
+Holdout labels are never changed.
+**Limitation.** Only articles where the model disagreed were re-examined, so an error shared
+by me and the model would not be found.

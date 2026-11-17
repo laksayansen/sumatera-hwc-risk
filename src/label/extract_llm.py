@@ -26,6 +26,8 @@ MODEL = "claude-haiku-5-5"
 CACHE = Path("data/interim/llm_cache.jsonl")
 GOLD = Path("labels/gold_labels.csv")
 MAX_CHARS = 15000          # Mongabay features are long; incidents can appear late
+MAX_CAPTION_CHARS = 3000   # photo captions, sent after the body text
+MAX_TOKENS = 3000          # room for articles with many events
 MAX_ATTEMPTS = 4
 
 SYSTEM = """You extract human-wildlife conflict events from Indonesian news articles for a
@@ -73,6 +75,8 @@ EXCLUDE
   reports totals, and create no events from the totals
 - Attacks blamed on a focal species only by residents' guesses, with no witness or evidence
 - Titles of related-article links ("Baca:", "Baca juga:") are not part of the article
+- Animals found in industrial or infrastructure sites (dams, power plants, canals, mines,
+  roads) when no threat to people, livestock, or crops is described, even if a team was sent
 
 SPECIAL RULES
 - Snares count as animal_harmed only when linked to protecting crops or livestock (for
@@ -90,8 +94,8 @@ SPECIAL RULES
   per month affected.
 - Separate places or separate dates are separate events. One herd raiding the same village
   for several days within one month is one event.
-- Photo captions are part of the article. If a caption and the body disagree on a date,
-  use the body.
+- Photo captions are part of the article. They appear after the article text under
+  "Keterangan foto". If a caption and the body disagree on a date, use the body.
 
 DATES
 - Use the incident date. Convert relative dates such as "Kamis (12/5)", "kemarin", or
@@ -101,6 +105,10 @@ DATES
 - If only the month is known, use the 1st of that month and set date_precision to "month".
 - Vague phrases that do not pin down a month ("beberapa bulan lalu", "tahun lalu") fail
   the date test.
+- Each event needs its own date in the article. Never give an incident the date of a
+  different event in the same story. For example, an attack described only as happening
+  "sebelumnya" (before) a capture in April does NOT take April as its date: the attack fails
+  the date test, and the dated capture is still its own incursion_response event.
 
 WORDS THAT ARE NOT FOCAL SPECIES
 harimau dahan (clouded leopard), macan tutul (leopard), kebun binatang (zoo), and species
@@ -130,29 +138,44 @@ def parse_json(text: str) -> dict:
     return json.loads(text[start:end + 1] if start >= 0 else text)
 
 
+def build_message(article: dict) -> str:
+    msg = (f"Publication date: {article['pub_date']}\nTitle: {article['title']}\n\n"
+           f"{article['text'][:MAX_CHARS]}")
+    if article.get("captions"):
+        msg += f"\n\nKeterangan foto:\n{article['captions'][:MAX_CAPTION_CHARS]}"
+    return msg
+
+
 def call_llm(client, article: dict) -> dict:
-    user = (f"Publication date: {article['pub_date']}\nTitle: {article['title']}\n\n"
-            f"{article['text'][:MAX_CHARS]}")
-    last_error = None
+    """Call the model with retries. API errors back off and retry; a reply that is not valid
+    JSON is retried once, then saved with its raw text and stop_reason for diagnosis."""
+    user = build_message(article)
+    last_error, parse_failures = None, 0
     for attempt in range(1, MAX_ATTEMPTS + 1):
         try:
-            resp = client.messages.create(model=MODEL, max_tokens=2000, system=SYSTEM,
+            resp = client.messages.create(model=MODEL, max_tokens=MAX_TOKENS, system=SYSTEM,
                                           messages=[{"role": "user", "content": user}])
-            raw = "".join(b.text for b in resp.content if getattr(b, "type", "") == "text")
-            usage = getattr(resp, "usage", None)
-            tokens = {"input_tokens": getattr(usage, "input_tokens", None),
-                      "output_tokens": getattr(usage, "output_tokens", None)}
-            try:
-                return {"parsed": parse_json(raw), "raw": raw, "error": None, **tokens}
-            except (json.JSONDecodeError, ValueError) as exc:
-                return {"parsed": None, "raw": raw, "error": f"parse: {exc}", **tokens}
         except Exception as exc:                      # network, rate limit, server errors
             last_error = f"{type(exc).__name__}: {exc}"
             wait = 10 * 2 ** (attempt - 1)
             print(f"  attempt {attempt} failed ({type(exc).__name__}), waiting {wait}s")
             time.sleep(wait)
+            continue
+        raw = "".join(b.text for b in resp.content if getattr(b, "type", "") == "text")
+        usage = getattr(resp, "usage", None)
+        meta = {"input_tokens": getattr(usage, "input_tokens", None),
+                "output_tokens": getattr(usage, "output_tokens", None),
+                "stop_reason": getattr(resp, "stop_reason", None)}
+        try:
+            return {"parsed": parse_json(raw), "raw": raw, "error": None, **meta}
+        except (json.JSONDecodeError, ValueError) as exc:
+            parse_failures += 1
+            last_error = f"parse: {exc} (stop_reason={meta['stop_reason']})"
+            if parse_failures >= 2:
+                return {"parsed": None, "raw": raw, "error": last_error, **meta}
+            print(f"  reply was not valid JSON (stop_reason={meta['stop_reason']}), retrying once")
     return {"parsed": None, "raw": "", "error": f"api: {last_error}",
-            "input_tokens": None, "output_tokens": None}
+            "input_tokens": None, "output_tokens": None, "stop_reason": None}
 
 
 def split_urls(split: str) -> set[str]:
