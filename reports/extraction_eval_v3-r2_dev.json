@@ -1,0 +1,26 @@
+{
+  "prompt_version": "v3-r2",
+  "split": "dev",
+  "n_articles": 100,
+  "n_gold_events_articles": 14,
+  "n_failed": 0,
+  "tp": 14,
+  "fp": 4,
+  "fn": 0,
+  "tn": 82,
+  "precision": 0.778,
+  "recall": 1.0,
+  "f1": 0.875,
+  "field_accuracy_on_tp": {
+    "event_type": 1.0,
+    "species": 1.0,
+    "kabupaten": 1.0,
+    "province": 1.0,
+    "month": 1.0,
+    "n_events": 0.786
+  },
+  "keyword_filter_recall_est": 1.0,
+  "tokens_in": 646217,
+  "tokens_out": 42814,
+  "cost_usd": 0.086
+}

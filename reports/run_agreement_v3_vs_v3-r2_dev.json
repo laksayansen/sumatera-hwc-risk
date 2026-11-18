@@ -1,0 +1,10 @@
+{
+  "run_a": "v3",
+  "run_b": "v3-r2",
+  "split": "dev",
+  "articles_compared": 100,
+  "is_event_agreement": 0.99,
+  "is_event_disagreements": 1,
+  "identical_cells": 0.98,
+  "articles_with_different_cells": 2
+}
